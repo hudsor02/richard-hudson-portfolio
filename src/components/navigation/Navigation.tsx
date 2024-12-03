@@ -1,70 +1,60 @@
 'use client';
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import styles from './Navigation.module.css';
-import clsx from 'clsx';
 
-// Define the navigation items as an array of objects containing href and label
-const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About Richard' },
-  { href: '/resume', label: 'Resume' },
-  { href: '/consulting-services', label: 'Consulting Services' },
-  { href: '/contact', label: 'Contact Richard' },
-] as const;
-
-export function Navigation() {
+const Navigation = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Function to determine if a navigation item is active based on the current path
-  const isActive = (path: string) => {
-    const cleanedPath = pathname.replace(/\/?(\?.*)?$/, ''); // Remove trailing slash and query params
-    const cleanedTargetPath = path.replace(/\/?$/, ''); // Remove trailing slash
-    return cleanedPath === cleanedTargetPath;
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navItems = [
+    { href: '/', label: 'Home' },
+    { href: '/resume', label: 'Resume' },
+    { href: '/about', label: 'About' },
+    { href: '/projects', label: 'Projects' },
+    { href: '/consult', label: 'Consulting Services' },
+    { href: '/contact', label: 'Contact' },
+  ];
 
   return (
     <nav
-      className={styles.navContainer}
-      role="navigation"
-      aria-label="Main Navigation"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm' : 'bg-transparent'
+      }`}
     >
-      <div className={styles.container}>
-        {/* Wrapper container for centering content */}
-        <div className={styles.navContent}>
-          {/* Logo/Name */}
-          <Link className={styles.logo} href="/" aria-label="Navigate to Home">
-            Richard Hudson
-          </Link>
-          {/* Navigation Links */}
-          <div className={styles.navLinksWrapper}>
-            <div className={styles.navLinksContainer}>
-              {navItems.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className={clsx(
-                    styles.navLink,
-                    isActive(href)
-                      ? styles.activeNavLink
-                      : styles.inactiveNavLink // Fixed the typo here
-                  )}
-                  aria-current={isActive(href) ? 'page' : undefined} // Accessibility improvement
-                >
-                  {label}
-                  {isActive(href) && (
-                    <span className={styles.activeTabIndicator} />
-                  )}
-                </Link>
-              ))}
-            </div>
-          </div>
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <Link href="/" className="text-xl font-bold">
+          Your Name
+        </Link>
+
+        <div className="hidden md:flex space-x-8">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`transition-colors hover:text-blue-600 ${
+                pathname === item.href
+                  ? 'text-blue-600 font-medium'
+                  : 'text-gray-600'
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
       </div>
     </nav>
   );
-}
+};
 
 export default Navigation;

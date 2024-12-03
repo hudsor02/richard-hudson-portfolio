@@ -1,65 +1,92 @@
-'use client';
-
-import { Outfit, Plus_Jakarta_Sans } from 'next/font/google';
-import { Navigation } from '@/components/navigation/Navigation';
-import { BackgroundGradient } from '@/components/ui/background-gradient';
-import { ScrollProgress } from '@/components/ui/Scroll-Progress';
-import { Footer } from '@/components/navigation/Footer';
-import SEO from '@/components/seo/SEO';
+import type { Metadata } from 'next';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
-import { Toaster } from 'sonner';
-import '@/styles/globals.css';
+import Navigation from '@/components/navigation/Navigation';
+import { Footer } from '@/components/navigation/Footer';
+import { BackgroundGradient } from '@/components/ui/background-gradient';
+import { ScrollProgress } from '@/components/ui/scroll-progress';
+import { ToastProvider as Toaster } from '@/components/notifications/ToastProvider';
+import '../styles/globals.css';
 
-const outfit = Outfit({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-outfit',
   display: 'swap',
-  preload: true,
+  variable: '--font-plus-jakarta-sans',
 });
 
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  variable: '--font-jakarta',
-  display: 'swap',
-  preload: true,
-});
+export const metadata: Metadata = {
+  title: {
+    default: 'Richard Hudson - Revenue Operations Consultant',
+    template: '%s | Richard Hudson',
+  },
+  description:
+    'Revenue Operations Professional specializing in data-driven solutions and strategic optimizations that drive growth.',
+  keywords: [
+    'Revenue Operations',
+    'Business Consulting',
+    'Data Analytics',
+    'Process Optimization',
+    'Strategic Planning',
+    'Dallas Fort Worth',
+    'Texas',
+    'RevOps',
+  ],
+  authors: [{ name: 'Richard Hudson' }],
+  creator: 'Richard Hudson',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://richardwhudsonjr.com',
+    title: 'Richard Hudson - Revenue Operations Consultant',
+    description:
+      'Revenue Operations Professional specializing in data-driven solutions and strategic optimizations that drive growth.',
+    siteName: 'Richard Hudson Portfolio',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Richard Hudson - Revenue Operations Consultant',
+    description:
+      'Revenue Operations Professional specializing in data-driven solutions and strategic optimizations that drive growth.',
+    creator: '@richardwhudsonjr',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+};
 
-export default function RootLayout({
-  children,
-}: {
+interface RootLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
+      className={`${plusJakartaSans.variable}`}
       suppressHydrationWarning
-      className={`${outfit.variable} ${jakarta.variable} scroll-smooth`}
     >
-      <SEO
-        title="Richard Hudson | Revenue Operations Professional"
-        description="Explore Richard Hudson's portfolio showcasing expertise in revenue operations, process automation, and partner management."
-        canonical="https://richardwhudsonjr.com"
-        openGraph={{
-          type: 'website',
-          locale: 'en_US',
-          url: 'https://richardwhudsonjr.com',
-          site_name: 'Richard Hudson Portfolio',
-        }}
-      />
-      <body className="min-h-screen bg-white text-neutral-900 antialiased selection:bg-blue-100">
-        <div className="relative flex flex-col min-h-screen">
+      <head />
+      <body className="min-h-screen bg-white font-sans antialiased dark:bg-neutral-900">
+        <div className="relative flex min-h-screen flex-col">
+          <Navigation />
           <ScrollProgress />
           <BackgroundGradient />
-          <Navigation />
-          <main className="flex-1 flex items-center justify-center">
-            <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 text-center">
-              {children}
-            </div>
-          </main>
+
+          <main className="flex-1">{children}</main>
+
           <Footer />
         </div>
-        <Toaster position="bottom-right" richColors expand={true} />
-        <Analytics mode="production" debug={false} />
+
+        <Toaster />
+        <Analytics />
       </body>
     </html>
   );

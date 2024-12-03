@@ -1,36 +1,23 @@
 'use client';
 
-import React from 'react';
-import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
-interface MetricsCardProps {
+interface MetricCardProps {
   metric: string;
-  label: string;
-  className?: string;
+  description: string;
+  icon?: React.ReactNode; // Optional icon prop
 }
 
-const MetricsCard: React.FC<MetricsCardProps> = ({
-  metric,
-  label,
-  className,
-}) => {
+export function MetricCard({ metric, description, icon }: MetricCardProps) {
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center justify-center p-6 text-center',
-        'rounded-lg shadow-md bg-white dark:bg-neutral-800',
-        'transition-transform transform hover:scale-105 duration-200 ease-in-out',
-        className
-      )}
+    <motion.div
+      className="bg-white rounded-lg p-6 text-center shadow-md"
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.2 }}
     >
-      <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-        {metric}
-      </div>
-      <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-        {label}
-      </div>
-    </div>
+      {icon && <div className="mb-2">{icon}</div>}
+      <div className="text-2xl font-bold text-blue-600 mb-2">{metric}</div>
+      <div className="text-sm text-neutral-600">{description}</div>
+    </motion.div>
   );
-};
-
-export { MetricsCard };
+}

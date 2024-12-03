@@ -17,6 +17,12 @@ const metrics: Metric[] = [
 ];
 
 export default function HomePage() {
+  const metrics = [
+    { label: 'Annual Revenue', value: '$1.1M+' },
+    { label: 'Partner Growth', value: '2,200%' },
+    { label: 'Transaction Volume', value: '432%' },
+    { label: 'Commission Accuracy', value: '100%' },
+  ];
   return (
     <div className="mx-auto max-w-5xl space-y-16 px-4">
       <Hero

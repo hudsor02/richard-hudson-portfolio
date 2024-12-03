@@ -1,29 +1,29 @@
-// src/components/error.tsx
 'use client';
 
 import { useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
 
-interface ErrorProps {
+export default function ErrorComponent({
+  error,
+  reset,
+}: {
   error: Error & { digest?: string };
   reset: () => void;
-}
-
-export default function Error({ error, reset }: ErrorProps) {
+}) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Error:', error);
+    console.error(error);
   }, [error]);
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
-      <h2 className="mb-4 text-2xl font-bold text-neutral-900 dark:text-white">
-        Something went wrong!
-      </h2>
-      <p className="mb-4 text-neutral-600 dark:text-neutral-400">
-        {error.message || 'An unexpected error occurred'}
-      </p>
-      <Button onClick={reset}>Try again</Button>
+    <div className="flex min-h-[50vh] flex-col items-center justify-center">
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-bold">Something went wrong</h2>
+        <button
+          onClick={reset}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+        >
+          Try again
+        </button>
+      </div>
     </div>
   );
 }

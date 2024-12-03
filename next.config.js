@@ -2,12 +2,10 @@
 const nextConfig = {
   transpilePackages: ['framer-motion'],
   reactStrictMode: true,
-  swcMinify: true,
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'richardwhudsonjr.com'],
     formats: ['image/avif', 'image/webp'],
   },
-
   async headers() {
     return [
       {

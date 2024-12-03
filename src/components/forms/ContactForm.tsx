@@ -1,208 +1,144 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import { Button } from '@/components/ui/Button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/TextArea';
-import type { ContactFormType, ContactFormData } from '@/types/contact';
-
-const contactFormSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
-  subject: z.string().min(2, 'Subject must be at least 2 characters'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-  company: z.string().optional(),
-});
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import type { ContactFormType } from '@/types/contact';
+import { submitContactAction } from '@/app/actions';
 
 interface ContactFormProps {
-  type?: ContactFormType;
-  onSuccess?: () => void;
-  onSubmit?: (data: ContactFormData) => Promise<void>;
+  type: 'contact' | 'consultation';
 }
 
-export function ContactForm({
-  type = 'contact',
-  onSuccess,
-  onSubmit,
-}: ContactFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function ContactForm({ type }: ContactFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<ContactFormData>({
-    resolver: zodResolver(contactFormSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      subject: '',
-      message: '',
-      company: '',
-    },
-  });
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isLoading) return;
 
-  const handleSubmit = async (data: ContactFormData) => {
-    setIsSubmitting(true);
+    setIsLoading(true);
+    const form = event.currentTarget;
+
     try {
-      if (onSubmit) {
-        await onSubmit(data);
+      const formData = new FormData(form);
+      const data: ContactFormType = {
+        name: formData.get('name') as string,
+        email: formData.get('email') as string,
+        subject: formData.get('subject') as string,
+        message: formData.get('message') as string,
+        company: (formData.get('company') as string) || undefined,
+      };
+
+      const result = await submitContactAction(data);
+
+      if (result.success) {
+        toast.success("Message sent successfully! I'll get back to you soon.");
+        form.reset();
       } else {
-        // Default submission logic if no onSubmit prop is provided
-        const response = await fetch(`/api/contact?type=${type}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to send message');
-        }
+        throw new Error(result.error || 'Failed to send message');
       }
-
-      toast.success('Message sent successfully!');
-      form.reset();
-      onSuccess?.();
     } catch (error) {
-      console.error('Contact form submission error:', error);
+      console.error('Form submission error:', error);
       toast.error('Failed to send message. Please try again.');
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        className="mx-auto w-full max-w-md"
-      >
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
+    <div className="w-full max-w-md mx-auto">
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div>
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
           >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Your full name"
-                      {...field}
-                      disabled={isSubmitting}
-                      className="bg-white dark:bg-neutral-900"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            required
+            className="mt-1 block w-full rounded-md border-neutral-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+          />
+        </div>
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="you@example.com"
-                      {...field}
-                      disabled={isSubmitting}
-                      className="bg-white dark:bg-neutral-900"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            required
+            className="mt-1 block w-full rounded-md border-neutral-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+          />
+        </div>
 
-            <FormField
-              control={form.control}
-              name="subject"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Subject</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="What's this about?"
-                      {...field}
-                      disabled={isSubmitting}
-                      className="bg-white dark:bg-neutral-900"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div>
+          <label
+            htmlFor="subject"
+            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+          >
+            Subject
+          </label>
+          <input
+            type="text"
+            name="subject"
+            id="subject"
+            required
+            className="mt-1 block w-full rounded-md border-neutral-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+          />
+        </div>
 
-            <FormField
-              control={form.control}
-              name="company"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Your company name"
-                      {...field}
-                      disabled={isSubmitting}
-                      className="bg-white dark:bg-neutral-900"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div>
+          <label
+            htmlFor="message"
+            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+          >
+            Message
+          </label>
+          <textarea
+            name="message"
+            id="message"
+            rows={4}
+            required
+            className="mt-1 block w-full rounded-md border-neutral-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+          />
+        </div>
 
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Message</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Your message here..."
-                      className="min-h-[120px] resize-y bg-white dark:bg-neutral-900"
-                      {...field}
-                      disabled={isSubmitting}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div>
+          <label
+            htmlFor="company"
+            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+          >
+            Company (Optional)
+          </label>
+          <input
+            type="text"
+            name="company"
+            id="company"
+            className="mt-1 block w-full rounded-md border-neutral-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+          />
+        </div>
 
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                'Send Message'
-              )}
-            </Button>
-          </form>
-        </Form>
-      </motion.div>
-    </AnimatePresence>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600"
+        >
+          {isLoading ? (
+            <span>Sending...</span>
+          ) : (
+            <span className="flex items-center">Send Message</span>
+          )}
+        </button>
+      </form>
+    </div>
   );
 }

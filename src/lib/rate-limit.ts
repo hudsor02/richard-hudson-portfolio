@@ -5,7 +5,8 @@ type RateLimiterOptions = {
 };
 
 class RateLimiter {
-  private requests: Map<string, { count: number; timestamp: number }> = new Map();
+  private requests: Map<string, { count: number; timestamp: number }> =
+    new Map();
   private windowMs: number;
   private maxRequests: number;
   private message: string;

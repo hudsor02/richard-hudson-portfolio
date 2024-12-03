@@ -1,10 +1,7 @@
-// src/types/contact.ts
-export type ContactFormType = 'contact' | 'consulting' | 'other';
-
-export interface ContactFormData {
+export type ContactFormType = {
   name: string;
   email: string;
   subject: string;
   message: string;
   company?: string;
-}
+};

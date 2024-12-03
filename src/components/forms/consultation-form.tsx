@@ -1,8 +1,9 @@
 // src/components/forms/consultation-form.tsx
 'use client';
 
+import React from 'react';
 import { ContactForm } from './ContactForm';
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '../../components/ui/Badge';
 
 export function ConsultationForm() {
   return (

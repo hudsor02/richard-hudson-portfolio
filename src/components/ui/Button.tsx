@@ -31,34 +31,25 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       outline:
         'border border-neutral-300 bg-transparent hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800',
       primary:
-        'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600',
+        'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-600',
       ghost:
-        'hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-neutral-50',
+        'bg-transparent text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800',
     };
 
     const sizes = {
-      sm: 'h-8 px-3 text-sm',
-      md: 'h-10 px-4 text-base',
-      lg: 'h-12 px-6 text-lg',
+      sm: 'px-2.5 py-1.5 text-xs',
+      md: 'px-4 py-2 text-sm',
+      lg: 'px-6 py-3 text-base',
     };
 
     return (
       <button
         ref={ref}
-        className={cn(
-          baseStyles,
-          variants[variant],
-          sizes[size],
-          isLoading && 'cursor-not-allowed opacity-70',
-          className
-        )}
+        className={cn(baseStyles, variants[variant], sizes[size], className)}
         disabled={isLoading}
         {...props}
       >
-        {isLoading && (
-          <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-        )}
-        {children}
+        {isLoading ? 'Loading...' : children}
       </button>
     );
   }

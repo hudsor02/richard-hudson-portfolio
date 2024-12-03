@@ -1,11 +1,12 @@
-// tailwind.config.ts
-import { Config } from 'tailwindcss';
+import { Config } from 'tailwindcss/types/config';
+import { plusJakartaSans } from './shared/fonts';
+import typography from '@tailwindcss/typography';
+import animate from 'tailwindcss-animate';
+import aspectRatio from '@tailwindcss/aspect-ratio';
+import forms from '@tailwindcss/forms';
+
 const config: Config = {
-  content: [
-    './src/app/**/*.{js,ts,jsx,tsx}',
-    './src/components/**/*.{js,ts,jsx,tsx}',
-    './src/lib/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ['./src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -19,7 +20,7 @@ const config: Config = {
           600: '#525252',
           700: '#404040',
           800: '#262626',
-          900: '#1a1a1a',
+          900: '#171717',
         },
         blue: {
           50: '#eff6ff',
@@ -31,15 +32,11 @@ const config: Config = {
           primary: 'hsl(226, 100%, 50%)',
           hover: 'hsl(226, 100%, 45%)',
         },
-        text: {
-          primary: 'hsl(220, 10%, 10%)',
-          secondary: 'hsl(220, 10%, 40%)',
-        },
       },
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        sans: plusJakartaSans,
         outfit: ['Outfit', 'system-ui', 'sans-serif'],
-        jakarta: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        jakarta: plusJakartaSans,
       },
       container: {
         center: true,
@@ -53,10 +50,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('tailwindcss-animate'),
-  ],
+  plugins: [typography, animate, aspectRatio, forms],
 };
+
 export default config;

@@ -16,9 +16,7 @@ export default function AboutPage() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <h1 className="mb-4 text-4xl font-bold text-neutral-900">
-            About Me
-          </h1>
+          <h1 className="mb-4 text-4xl font-bold text-neutral-900">About Me</h1>
           <p className="text-xl text-neutral-600">
             I am Richard Hudson, a Revenue Operations Professional specializing
             in data-driven solutions and strategic optimizations that drive

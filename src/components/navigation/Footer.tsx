@@ -1,10 +1,11 @@
 'use client';
+import React from 'react';
 
 import { motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
-import { SocialLinks } from '@/components/social-links';
+import { cn } from '../../lib/utils';
+import { Button } from '../../components/ui/Button';
+import { SocialLinks } from '../../components/social-links';
 import Link from 'next/link';
 
 const footerVariants = {

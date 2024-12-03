@@ -1,29 +1,57 @@
-// src/app/api/consultation/route.ts
 import { NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
-import { rateLimit } from '@/lib/rate-limit';
-import { contactFormSchema } from '@/lib/validations';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
+import { contactFormSchema } from '@/lib/validation/contact';
+import { z } from 'zod';
 
-const limiter = rateLimit({
-  interval: 60 * 1000,
-  uniqueTokenPerInterval: 500,
+// Initialize rate limiter with valid configuration
+const limiter = new RateLimiterMemory({
+  points: 3, // Allow 3 requests
+  duration: 60, // Per 60 seconds (1 minute)
 });
 
 export async function POST(request: Request) {
   try {
-    await limiter.check(3, 'CONSULTATION_FORM'); // Stricter rate limit for consultations
+    // Rate limiting: Identify user by IP or a default key
+    const clientIP =
+      request.headers.get('x-forwarded-for') || 'CONSULTATION_FORM';
+    await limiter.consume(clientIP); // Consume 1 point for the request
 
+    // Parse and validate the request body using the schema
     const body = await request.json();
     const validatedData = contactFormSchema.parse(body);
 
-    await sendEmail(validatedData, 'consultation');
+    // Send email for consultation request
+    await sendEmail(
+      { ...validatedData, subject: 'Consultation Request' },
+      'consultation'
+    );
 
+    // Respond with success message
     return NextResponse.json(
       { message: 'Consultation request sent successfully' },
       { status: 200 }
     );
   } catch (error) {
     console.error('Error processing consultation form:', error);
+
+    // Handle rate limiting errors
+    if (error instanceof Error && error.message.includes('RateLimiter')) {
+      return NextResponse.json(
+        { message: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
+    // Handle validation errors
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { message: 'Invalid form data', errors: (error as z.ZodError).errors },
+        { status: 400 }
+      );
+    }
+
+    // Handle generic errors
     return NextResponse.json(
       { message: 'Failed to send consultation request' },
       { status: 500 }

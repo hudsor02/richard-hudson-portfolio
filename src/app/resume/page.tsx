@@ -1,123 +1,122 @@
-// src/app/resume/page.tsx
-import { Metadata } from 'next';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { resumeData } from '@/lib/resume-data';
-import DownloadButtons from '@/components/download-buttons';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Resume - Richard Hudson',
-  description:
-    'Professional resume of Richard Hudson - Revenue Operations Consultant',
+import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/Card';
+import { MetricCard } from '@/components/ui/MetricCard';
+import DownloadButtons from '@/components/download-buttons';
+import { resumeData } from '@/lib/resume-data';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5 },
+  },
 };
 
 export default function ResumePage() {
   return (
-    <main className="container mx-auto px-4 py-12">
-      <div className="mx-auto max-w-4xl space-y-12">
-        <section className="text-center">
-          <h1 className="text-4xl font-bold mb-6">Resume</h1>
-          <DownloadButtons />
-        </section>
+    <main className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-12">
+        <motion.div
+          className="max-w-4xl mx-auto space-y-12"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.section variants={itemVariants} className="text-center">
+            <h1 className="text-4xl font-bold text-neutral-900 mb-8">Resume</h1>
+            <DownloadButtons />
+          </motion.section>
 
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Key Highlights</h2>
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            {resumeData.highlights.map((highlight) => (
-              <Card key={highlight.description} className="p-6 text-center">
-                <div className="text-2xl font-bold text-blue-600">
-                  {highlight.metric}
+          <motion.section variants={itemVariants}>
+            <h2 className="text-2xl font-bold text-neutral-900 mb-6">
+              Key Highlights
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {resumeData.highlights.map((highlight) => (
+                <MetricCard
+                  key={highlight.description}
+                  metric={highlight.metric}
+                  description={highlight.description}
+                />
+              ))}
+            </div>
+          </motion.section>
+
+          <motion.section variants={itemVariants}>
+            <h2 className="text-2xl font-bold text-neutral-900 mb-6">
+              Professional Experience
+            </h2>
+            {resumeData.experience.map((job, index) => (
+              <Card key={index} className="mb-6 p-6 bg-white text-neutral-900">
+                <div className="mb-4 flex flex-col md:flex-row justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold">{job.position}</h3>
+                    <p className="text-neutral-600">
+                      {job.company} - {job.location}
+                    </p>
+                  </div>
+                  <p className="text-blue-600">{job.dates}</p>
                 </div>
-                <div className="text-sm text-gray-600">
-                  {highlight.description}
-                </div>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Professional Summary</h2>
-          <Card className="p-6">
-            <p className="text-gray-700">{resumeData.summary}</p>
-          </Card>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Professional Experience</h2>
-          {resumeData.experience.map((job, index) => (
-            <Card key={index} className="mb-6 p-6">
-              <div className="mb-4 flex flex-col justify-between md:flex-row">
-                <div>
-                  <h3 className="text-xl font-bold">{job.position}</h3>
-                  <p className="text-gray-600">
-                    {job.company} - {job.location}
-                  </p>
-                </div>
-                <p className="text-blue-600">{job.dates}</p>
-              </div>
-              <ul className="space-y-2 pl-6 list-disc">
-                {job.achievements.map((achievement, i) => (
-                  <li key={i} className="text-gray-700">
-                    {achievement}
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          ))}
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Technical Expertise</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {resumeData.technicalExpertise.columns.map((column, index) => (
-              <Card key={index} className="p-6">
-                <h3 className="mb-4 text-lg font-bold">{column.title}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {column.items.map((item, i) => (
-                    <Badge key={i} variant="outline">
-                      {item}
-                    </Badge>
+                <ul className="space-y-3 list-disc pl-6">
+                  {job.achievements.map((achievement, i) => (
+                    <li key={i} className="text-neutral-700">
+                      {achievement}
+                    </li>
                   ))}
+                </ul>
+              </Card>
+            ))}
+          </motion.section>
+
+          <motion.section variants={itemVariants}>
+            <h2 className="text-2xl font-bold text-neutral-900 mb-6">
+              Education
+            </h2>
+            {resumeData.education.map((edu, index) => (
+              <Card key={index} className="mb-6 p-6 bg-white text-neutral-900">
+                <div className="mb-4 flex flex-col md:flex-row justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold">{edu.degree}</h3>
+                    <p className="text-neutral-600">
+                      {edu.institution}, {edu.location}
+                    </p>
+                  </div>
+                  <p className="text-blue-600">{edu.graduationDate}</p>
                 </div>
+                {edu.description && (
+                  <p className="text-neutral-700">{edu.description}</p>
+                )}
               </Card>
             ))}
-          </div>
-        </section>
+          </motion.section>
 
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Certifications</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {resumeData.certifications.map((cert, index) => (
-              <Card key={index} className="p-6">
-                <h3 className="text-lg font-bold">{cert.title}</h3>
-                <p className="text-sm text-gray-600">
-                  {cert.organization} - {cert.issueDate}
-                </p>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Education</h2>
-          {resumeData.education.map((edu, index) => (
-            <Card key={index} className="mb-6 p-6">
-              <div className="mb-4 flex flex-col justify-between md:flex-row">
-                <div>
-                  <h3 className="text-xl font-bold">{edu.degree}</h3>
-                  <p className="text-gray-600">
-                    {edu.institution} - {edu.location}
+          <motion.section variants={itemVariants}>
+            <h2 className="text-2xl font-bold text-neutral-900 mb-6">
+              Certifications
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {resumeData.certifications.map((cert, index) => (
+                <Card key={index} className="p-6 bg-white text-neutral-900">
+                  <h3 className="text-lg font-bold mb-2">{cert.title}</h3>
+                  <p className="text-neutral-600">
+                    {cert.organization} | {cert.issueDate}
                   </p>
-                </div>
-                <p className="text-blue-600">{edu.graduationDate}</p>
-              </div>
-              {edu.description && (
-                <p className="text-gray-700">{edu.description}</p>
-              )}
-            </Card>
-          ))}
-        </section>
+                </Card>
+              ))}
+            </div>
+          </motion.section>
+        </motion.div>
       </div>
     </main>
   );

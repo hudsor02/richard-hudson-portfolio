@@ -13,7 +13,10 @@ export const Input: React.FC<InputProps> = ({ label, error, ...props }) => {
           {label}
         </label>
       )}
-      <input className={`input-field ${error ? 'input-error' : 'input-normal'}`} {...props} />
+      <input
+        className={`input-field ${error ? 'input-error' : 'input-normal'}`}
+        {...props}
+      />
       {error && <p className="input-error-message">{error}</p>}
     </div>
   );

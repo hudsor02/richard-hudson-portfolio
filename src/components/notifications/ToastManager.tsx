@@ -1,61 +1,77 @@
-// src/components/notifications/ToastManager.tsx
 'use client';
 
-import { toast } from 'react-hot-toast';
-import { CustomToast } from './CustomToast';
-
-type ToastOptions = {
-  title?: string;
-  description?: string;
-  duration?: number;
-};
+import { toast } from 'sonner';
+import type { ToastOptions } from './types';
 
 export const ToastManager = {
   success: (options: ToastOptions) => {
-    return toast.custom(
-      t => (
-        <CustomToast
-          type="success"
-          title={options.title}
-          description={options.description}
-          toastId={t.id}
-        />
-      ),
-      {
-        duration: options.duration ?? 5000,
-      }
-    );
+    return toast.success(options.title, {
+      description: options.description,
+      duration: options.duration ?? 5000,
+      action: options.action && {
+        label: options.action.label,
+        onClick: options.action.onClick,
+      },
+      cancel: options.cancel && {
+        label: options.cancel.label,
+        onClick: options.cancel.onClick,
+      },
+    });
   },
 
   error: (options: ToastOptions) => {
-    return toast.custom(
-      t => (
-        <CustomToast
-          type="error"
-          title={options.title}
-          description={options.description}
-          toastId={t.id}
-        />
-      ),
-      {
-        duration: options.duration ?? 7000,
-      }
-    );
+    return toast.error(options.title, {
+      description: options.description,
+      duration: options.duration ?? 7000,
+      action: options.action && {
+        label: options.action.label,
+        onClick: options.action.onClick,
+      },
+      cancel: options.cancel && {
+        label: options.cancel.label,
+        onClick: options.cancel.onClick,
+      },
+    });
   },
 
   info: (options: ToastOptions) => {
-    return toast.custom(
-      t => (
-        <CustomToast
-          type="info"
-          title={options.title}
-          description={options.description}
-          toastId={t.id}
-        />
-      ),
-      {
-        duration: options.duration ?? 5000,
-      }
-    );
+    return toast.info(options.title, {
+      description: options.description,
+      duration: options.duration ?? 5000,
+      action: options.action && {
+        label: options.action.label,
+        onClick: options.action.onClick,
+      },
+      cancel: options.cancel && {
+        label: options.cancel.label,
+        onClick: options.cancel.onClick,
+      },
+    });
+  },
+
+  warning: (options: ToastOptions) => {
+    return toast.warning(options.title, {
+      description: options.description,
+      duration: options.duration ?? 6000,
+      action: options.action && {
+        label: options.action.label,
+        onClick: options.action.onClick,
+      },
+      cancel: options.cancel && {
+        label: options.cancel.label,
+        onClick: options.cancel.onClick,
+      },
+    });
+  },
+
+  promise: async <T,>(
+    promise: Promise<T>,
+    options: {
+      loading: string;
+      success: string;
+      error: string;
+    }
+  ) => {
+    return toast.promise(promise, options);
   },
 };

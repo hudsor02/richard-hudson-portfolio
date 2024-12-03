@@ -3,7 +3,7 @@
 
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import type { CustomToastProps } from './types';
 
 export function CustomToast({
