@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { SkeletonLoader } from './loading';
 
 interface DelayedLoadingProps {

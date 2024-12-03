@@ -1,45 +1,48 @@
-import { NextResponse } from 'next/server';
-import { generatePDF, generateDOCX } from '@/lib/generate-resume';
+import { generatePDF } from '@/lib/resume/generate-resume';
+import { NextRequest } from 'next/server';
 
-export async function POST(req: Request) {
-  if (req.method !== 'POST') {
-    return new NextResponse('Method Not Allowed', { status: 405 });
-  }
+export async function POST(_req: NextRequest) {
+  // Renamed 'req' to '_req' to indicate it's unused
+  console.log('Starting PDF generation request...');
 
   try {
-    const { format } = (await req.json()) as { format: 'pdf' | 'docx' };
-    let buffer: Buffer;
-    let contentType: string;
-    let filename: string;
+    const pdfBytes = await generatePDF();
 
-    switch (format) {
-      case 'pdf':
-        buffer = await generatePDF();
-        contentType = 'application/pdf';
-        filename = 'Richard_Hudson_Resume.pdf';
-        break;
-      case 'docx':
-        buffer = await generateDOCX();
-        contentType =
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-        filename = 'Richard_Hudson_Resume.docx';
-        break;
-      default:
-        return new NextResponse('Invalid format specified', { status: 400 });
+    if (!pdfBytes || !(pdfBytes instanceof Uint8Array)) {
+      console.error('Invalid PDF generation output:', pdfBytes);
+      throw new Error('PDF generation failed');
     }
 
-    return new NextResponse(buffer, {
+    console.log('PDF generated successfully, size:', pdfBytes.length);
+
+    // Create response with proper headers
+    const response = new Response(pdfBytes, {
       status: 200,
       headers: {
-        'Content-Type': contentType,
-        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Type': 'application/pdf',
+        'Content-Length': pdfBytes.length.toString(),
+        'Content-Disposition':
+          'attachment; filename="Richard_Hudson_Resume.pdf"',
         'Cache-Control': 'no-cache',
       },
     });
+
+    return response;
   } catch (error) {
-    console.error('Error generating resume:', error);
-    return new NextResponse('An error occurred while generating the resume', {
-      status: 500,
-    });
+    console.error('PDF generation error details:', error);
+
+    // Return detailed error for debugging
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to generate PDF',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   }
 }

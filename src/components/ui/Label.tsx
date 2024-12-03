@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
-import { Root as LabelPrimitiveRoot } from '@radix-ui/react-label';
 import { cn } from '@/lib/utils';
+import { Root as LabelPrimitiveRoot } from '@radix-ui/react-label';
+import * as React from 'react';
 
 // Forward ref for the Label component using Radix UI's Root
 const Label = React.forwardRef<

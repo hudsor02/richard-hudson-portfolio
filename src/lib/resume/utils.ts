@@ -1,34 +1,40 @@
-import { type PDFFont } from 'pdf-lib';
-import { ResumeData } from '@/types/resume';
+/**
+ * utils.ts
+ * Core utilities for resume generation
+ */
+
 import { RESUME_CONFIG } from '@/lib/constants/resume-constants';
+import { format as dateFormat, parseISO } from 'date-fns';
+import { PDFFont, PDFPage, rgb } from 'pdf-lib';
 
 export interface TextStyle {
   font: PDFFont;
-  size: number;
-  lineHeight?: number;
-  color?: { r: number; g: number; b: number };
+  fontSize: number;
+  color?: ReturnType<typeof rgb>;
+  maxWidth?: number;
+  align?: 'left' | 'center' | 'right';
+  x?: number;
+  y?: number;
 }
 
-export interface TextBlock {
-  text: string;
-  style: TextStyle;
-  x: number;
-  maxWidth: number;
-}
-
-export function wrapText(block: TextBlock): { lines: string[]; height: number } {
-  const words = block.text.split(' ');
+export function wrapText(
+  text: string,
+  font: PDFFont,
+  fontSize: number,
+  maxWidth: number
+): string[] {
+  const words = text.split(' ');
   const lines: string[] = [];
   let currentLine = '';
 
   for (const word of words) {
     const testLine = currentLine ? `${currentLine} ${word}` : word;
-    const width = block.style.font.widthOfTextAtSize(testLine, block.style.size);
+    const width = font.widthOfTextAtSize(testLine, fontSize);
 
-    if (width <= block.maxWidth) {
+    if (width <= maxWidth) {
       currentLine = testLine;
     } else {
-      lines.push(currentLine);
+      if (currentLine) lines.push(currentLine);
       currentLine = word;
     }
   }
@@ -37,122 +43,100 @@ export function wrapText(block: TextBlock): { lines: string[]; height: number } 
     lines.push(currentLine);
   }
 
-  const lineHeight = block.style.lineHeight || 1.2;
-  const totalHeight = lines.length * (block.style.size * lineHeight);
-
-  return { lines, height: totalHeight };
+  return lines;
 }
 
-export function calculateSectionHeight(
-  content: string[],
-  style: TextStyle,
-  maxWidth: number,
-  spacing: number
+export function drawTextBlock(
+  page: PDFPage,
+  text: string,
+  options: TextStyle
 ): number {
-  let totalHeight = 0;
+  const {
+    font,
+    fontSize,
+    color = rgb(0, 0, 0),
+    maxWidth = page.getWidth() -
+      RESUME_CONFIG.pdf.margins.left -
+      RESUME_CONFIG.pdf.margins.right,
+    align = 'left',
+  } = options;
 
-  for (const text of content) {
-    const { height } = wrapText({
-      text,
-      style,
-      x: 0,  // x position doesn't affect height calculation
-      maxWidth,
+  const lines = wrapText(text, font, fontSize, maxWidth);
+  let yPosition = options.y || page.getHeight() - RESUME_CONFIG.pdf.margins.top;
+
+  for (const line of lines) {
+    let xPosition = options.x || RESUME_CONFIG.pdf.margins.left;
+
+    if (align !== 'left') {
+      const lineWidth = font.widthOfTextAtSize(line, fontSize);
+      if (align === 'center') {
+        xPosition = (page.getWidth() - lineWidth) / 2;
+      } else if (align === 'right') {
+        xPosition =
+          page.getWidth() - RESUME_CONFIG.pdf.margins.right - lineWidth;
+      }
+    }
+
+    page.drawText(line, {
+      x: xPosition,
+      y: yPosition,
+      size: fontSize,
+      font,
+      color,
     });
-    totalHeight += height + spacing;
+
+    yPosition -= RESUME_CONFIG.pdf.fonts.spacing.line;
   }
 
-  return totalHeight;
-}
-
-export function formatDate(date: string): string {
-  return date.replace(/(\w+) (\d{4})/, '$1, $2');
-}
-
-export function extractKeywords(text: string): string[] {
-  const allKeywords = [
-    ...RESUME_CONFIG.ats.keywords.technical,
-    ...RESUME_CONFIG.ats.keywords.soft,
-    ...RESUME_CONFIG.ats.keywords.tools,
-  ];
-
-  return allKeywords.filter(keyword =>
-    text.toLowerCase().includes(keyword.toLowerCase())
-  );
+  return yPosition;
 }
 
 export function validatePageBreak(
   currentY: number,
   contentHeight: number,
-  pageHeight: number,
-  margins: { top: number; bottom: number }
+  margin: number = RESUME_CONFIG.pdf.margins.bottom
 ): boolean {
-  const availableSpace = currentY - margins.bottom;
-  return contentHeight > availableSpace;
+  return currentY - contentHeight < margin;
 }
 
-export function generateSectionTitle(
-  title: string,
-  prefix: string = ''
+export function calculateSectionHeight(
+  lines: number,
+  spacing: number = RESUME_CONFIG.pdf.fonts.spacing.line
+): number {
+  return lines * spacing;
+}
+
+export function formatDate(
+  dateString: string,
+  formatString = 'MMMM yyyy'
 ): string {
-  return prefix ? `${prefix} | ${title}` : title;
+  try {
+    return dateFormat(parseISO(dateString), formatString);
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return dateString;
+  }
 }
 
-export function formatAchievement(achievement: string): string {
-  // Ensure achievement starts with a strong action verb
-  if (!/^[A-Z][a-z]+ed|^[A-Z][a-z]+d|^[A-Z][a-z]+t/.test(achievement)) {
-    return achievement;
+export function formatDateRange(start: string, end?: string): string {
+  try {
+    const startDate = formatDate(start, 'MMM yyyy');
+    const endDate = end ? formatDate(end, 'MMM yyyy') : 'Present';
+    return `${startDate} - ${endDate}`;
+  } catch (error) {
+    console.error('Error formatting date range:', error);
+    return 'Invalid date range';
   }
+}
 
-  // Extract and highlight metrics
-  return achievement.replace(
-    /(\d+\.?\d*%|\$\d+\.?\d*[KMB]?\+?|\d+\.?\d*x)/g,
-    match => `**${match}**`
+export function sanitizeText(text: string): string {
+  return text.replace(/[^\x20-\x7E]/g, '').trim();
+}
+
+export function calculateContentWidth(page: PDFPage): number {
+  return (
+    page.getWidth() -
+    RESUME_CONFIG.pdf.margins.left -
+    RESUME_CONFIG.pdf.margins.right
   );
-}
-
-interface Section {
-  title: string;
-  content: string[];
-  order: number;
-}
-
-export function sortSections(sections: Section[]): Section[] {
-  return [...sections].sort((a, b) => a.order - b.order);
-}
-
-export function validateResumeLength(
-  content: string[],
-  style: TextStyle,
-  maxWidth: number,
-  pageHeight: number,
-  margins: { top: number; bottom: number }
-): boolean {
-  const totalHeight = calculateSectionHeight(
-    content,
-    style,
-    maxWidth,
-    RESUME_CONFIG.pdf.spacing.paragraph
-  );
-
-  const availableHeight = pageHeight - margins.top - margins.bottom;
-  return totalHeight <= availableHeight;
-}
-
-export class ResourceManager {
-  private resources: Set<{ dispose: () => void }> = new Set();
-
-  register(resource: { dispose: () => void }): void {
-    this.resources.add(resource);
-  }
-
-  dispose(): void {
-    for (const resource of this.resources) {
-      try {
-        resource.dispose();
-      } catch (error) {
-        console.error('Error disposing resource:', error);
-      }
-    }
-    this.resources.clear();
-  }
 }

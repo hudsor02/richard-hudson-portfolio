@@ -1,8 +1,7 @@
-// src/components/loading.tsx
 'use client';
 
-import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 interface LoaderProps {
   className?: string;
@@ -17,10 +16,10 @@ const sizeClasses = {
 
 export function FullPageLoader({ size = 'md', className }: LoaderProps) {
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-gray-900/80">
       <Loader2
         className={cn(
-          'animate-spin text-primary-600 dark:text-primary-400',
+          'animate-spin text-blue-600 dark:text-blue-400',
           sizeClasses[size],
           className
         )}
@@ -31,7 +30,7 @@ export function FullPageLoader({ size = 'md', className }: LoaderProps) {
 
 export function ContentLoader() {
   return (
-    <div className="w-24 h-6 rounded-md bg-neutral-200 dark:bg-neutral-700 animate-pulse" />
+    <div className="w-24 h-6 rounded-md bg-gray-200 dark:bg-gray-700 animate-pulse" />
   );
 }
 
@@ -48,7 +47,7 @@ export function SkeletonLoader({
     <div
       className={cn(
         'rounded-md animate-pulse',
-        'bg-neutral-200 dark:bg-neutral-700',
+        'bg-gray-200 dark:bg-gray-700',
         width,
         height,
         className

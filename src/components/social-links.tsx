@@ -1,22 +1,23 @@
 // src/components/social-links.tsx
 'use client';
 
-import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { Mail, Globe } from 'lucide-react';
+import { SiGithub, SiLinkedin } from 'react-icons/si';
 
 const socialLinks = [
   {
     name: 'LinkedIn',
-    href: 'https://linkedin.com/in/hudsor01',
-    icon: Linkedin,
+    href: 'https://linkedin.com/in/richardwhudsonjr',
+    icon: SiLinkedin,
     color: 'hover:text-[#0077b5]',
     label: 'Connect on LinkedIn',
   },
   {
     name: 'GitHub',
-    href: 'https://github.com/hudsor02',
-    icon: Github,
+    href: 'https://github.com/richardwhudsonjr',
+    icon: SiGithub,
     color: 'hover:text-[#333] dark:hover:text-white',
     label: 'View GitHub Profile',
   },

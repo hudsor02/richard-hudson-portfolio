@@ -1,6 +1,7 @@
 'use client';
 
 import { toast } from 'sonner';
+
 import type { ToastOptions } from './types';
 
 export const ToastManager = {

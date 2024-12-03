@@ -1,6 +1,6 @@
-import React from 'react';
-import { Mail, MapPin, Clock, ArrowRight } from 'lucide-react';
 import { ContactFormWrapper } from '@/components/ContactFormWrapper';
+import { Mail, MapPin, Clock } from 'lucide-react';
+import React from 'react';
 
 interface ContactInfo {
   icon: React.ElementType;
@@ -30,81 +30,38 @@ const contactInfo: ContactInfo[] = [
 
 export default function ContactPage() {
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-8 sm:py-16">
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
-        {/* Left Column - Contact Information */}
-        <div className="space-y-6 sm:space-y-8">
-          <div className="space-y-4">
-            <h1 className="font-outfit text-3xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-4xl md:text-5xl">
-              Let's Connect
-            </h1>
-            <p className="max-w-xl font-jakarta text-base text-neutral-600 dark:text-neutral-400 sm:text-lg">
-              Looking to optimize your revenue operations or discuss partnership
-              opportunities? I'm here to help you achieve your business
-              objectives.
-            </p>
-          </div>
+    <main className="container px-4 py-16 mx-auto mt-16">
+      <div className="grid max-w-6xl gap-12 mx-auto md:grid-cols-2">
+        {/* Left Column */}
+        <div className="flex flex-col justify-center">
+          <h1 className="mb-6 text-4xl font-bold">Let us Connect</h1>
+          <p className="mb-8 text-gray-600">
+            Looking to optimize your revenue operations or discuss partnership
+            opportunities? I am here to help you achieve your business
+            objectives.
+          </p>
 
-          {/* Contact Cards */}
-          <div className="mt-6 grid gap-4 sm:gap-6">
+          <div className="p-6 space-y-4 bg-white bg-opacity-50 rounded-lg">
             {contactInfo.map((item) => (
-              <div
-                key={item.title}
-                className="flex items-start space-x-4 rounded-lg border border-neutral-200 bg-white p-4 shadow-sm transition-all dark:border-neutral-800 dark:bg-neutral-900 sm:p-6"
-              >
-                <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900/30 sm:p-3">
-                  <item.icon className="h-5 w-5 text-blue-600 dark:text-blue-400 sm:h-6 sm:w-6" />
-                </div>
-                <div>
-                  <h3 className="font-outfit text-base font-semibold text-neutral-900 dark:text-white sm:text-lg">
-                    {item.title}
-                  </h3>
-                  {item.link ? (
-                    <a
-                      href={item.link}
-                      className="font-jakarta text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 sm:text-base"
-                    >
-                      {item.details}
-                    </a>
-                  ) : (
-                    <p className="font-jakarta text-sm text-neutral-600 dark:text-neutral-400 sm:text-base">
-                      {item.details}
-                    </p>
-                  )}
-                </div>
+              <div key={item.title} className="flex items-center gap-3">
+                <item.icon className="w-5 h-5 text-blue-600" />
+                {item.link ? (
+                  <a href={item.link} className="hover:text-blue-600">
+                    {item.details}
+                  </a>
+                ) : (
+                  <span>{item.details}</span>
+                )}
               </div>
             ))}
           </div>
-
-          {/* Additional Info */}
-          <div className="mt-6 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/10 sm:mt-8 sm:p-6">
-            <h3 className="font-outfit text-base font-semibold text-neutral-900 dark:text-white sm:text-lg">
-              Quick Response Guaranteed
-            </h3>
-            <p className="mt-2 font-jakarta text-sm text-neutral-600 dark:text-neutral-400 sm:text-base">
-              I prioritize clear communication and aim to respond to all
-              inquiries within 24-48 hours. For urgent matters, please indicate
-              in your message.
-            </p>
-          </div>
-
-          {/* CTA Section */}
-          <div className="mt-6 sm:mt-8">
-            <a
-              href="/resume"
-              className="inline-flex items-center space-x-2 font-jakarta text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              <span>View my resume</span>
-              <ArrowRight className="h-4 w-4" />
-            </a>
-          </div>
         </div>
 
-        {/* Right Column - Contact Form */}
-        <div className="relative w-full lg:sticky lg:top-24">
+        {/* Right Column */}
+        <div className="p-8 bg-white rounded-lg shadow-lg">
           <ContactFormWrapper />
         </div>
       </div>
-    </div>
+    </main>
   );
 }

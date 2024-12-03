@@ -1,26 +1,18 @@
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { sendEmail } from '@/lib/email';
+import { contactFormSchema } from '@/lib/validation/contact';
+import { FormType, ContactFormType } from '@/types/contact';
+import { NextResponse } from 'next/server';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
-import type { ContactFormType } from '@/types/contact';
-
-// Define EmailTemplate type with valid values
-type EmailTemplate = 'contact' | 'consultation' | 'support' | 'feedback';
+import { z } from 'zod';
 
 // Initialize rate limiter with valid configuration
 const limiter = new RateLimiterMemory({
-  points: 5, // Allow 5 requests
+  points: 3, // Allow 3 requests
   duration: 60, // Per 60 seconds (1 minute)
 });
 
-// Define contact form validation schema using zod
-const contactFormSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  subject: z.string().min(2, 'Subject must be at least 2 characters'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-  company: z.string().optional(),
-});
+// Define EmailTemplateKind types with valid values
+type EmailTemplateKind = 'contact' | 'consultation' | 'support' | 'feedback';
 
 export async function POST(request: Request) {
   try {
@@ -32,25 +24,32 @@ export async function POST(request: Request) {
     const { searchParams } = new URL(request.url);
     const queryType = searchParams.get('type') || 'contact';
 
-    // Validate queryType as EmailTemplate or fallback to undefined
-    const allowedTypes: EmailTemplate[] = [
+    // Validate queryType as EmailTemplateKind or fallback to 'contact'
+    const allowedTypes: EmailTemplateKind[] = [
       'contact',
       'consultation',
       'support',
       'feedback',
     ];
-    const type: EmailTemplate | undefined = allowedTypes.includes(
-      queryType as EmailTemplate
+    const type: EmailTemplateKind = allowedTypes.includes(
+      queryType as EmailTemplateKind
     )
-      ? (queryType as EmailTemplate)
-      : undefined;
+      ? (queryType as EmailTemplateKind)
+      : 'contact';
 
     // Parse and validate the request body using zod schema
     const body = await request.json();
     const validatedData = contactFormSchema.parse(body);
 
+    // Include the 'type' property in the validated data
+    const contactFormData: ContactFormType = {
+      ...validatedData,
+      type: type as FormType,
+      subject: validatedData.subject || 'No Subject', // Default subject if not provided
+    };
+
     // Send email using validated data and email type
-    await sendEmail(validatedData, type);
+    await sendEmail(contactFormData, type as EmailTemplateKind);
 
     // Respond with success message
     return NextResponse.json(

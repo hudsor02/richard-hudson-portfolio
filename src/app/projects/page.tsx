@@ -1,8 +1,6 @@
 // src/app/projects/page.tsx
-import React from 'react';
 import { Metadata } from 'next';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'Projects - Richard Hudson',
@@ -22,37 +20,35 @@ const projects = [
 
 export default function ProjectsPage() {
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="mb-12 text-center text-4xl font-bold">Projects</h1>
+    <main className="container mx-auto px-4 py-16 mt-16">
+      <h1 className="text-4xl font-bold text-center mb-12">
+        Featured Projects
+      </h1>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {projects.map((project, index) => (
-            <Card key={index} className="p-6 transition-shadow hover:shadow-lg">
-              <h3 className="mb-3 text-xl font-bold">{project.title}</h3>
-              <p className="mb-4 text-neutral-600 dark:text-neutral-300">
-                {project.description}
-              </p>
-              <div className="mb-4 flex flex-wrap gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {projects.map((project) => (
+          <div
+            key={project.title}
+            className="bg-white rounded-lg shadow-lg overflow-hidden"
+          >
+            <div className="p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {project.title}
+              </h3>
+              <p className="text-gray-600 mb-4">{project.description}</p>
+              <div className="flex flex-wrap gap-2">
                 {project.tags.map((tag) => (
-                  <Badge key={tag} variant="default">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-              <div className="space-y-1">
-                {project.metrics.map((metric) => (
-                  <p
-                    key={metric}
-                    className="text-primary-600 dark:text-primary-400 text-sm"
+                  <span
+                    key={tag}
+                    className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm"
                   >
-                    {metric}
-                  </p>
+                    {tag}
+                  </span>
                 ))}
               </div>
-            </Card>
-          ))}
-        </div>
+            </div>
+          </div>
+        ))}
       </div>
     </main>
   );

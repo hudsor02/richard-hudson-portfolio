@@ -1,4 +1,3 @@
-// src/components/navigation/Navigation.tsx
 'use client';
 
 import NavigationButton from '@/components/ui/Buttons/NavigationDownloadButton';
@@ -7,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
-const Navigation: React.FC = () => {
+export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
@@ -101,6 +100,4 @@ const Navigation: React.FC = () => {
       </div>
     </nav>
   );
-};
-
-export default Navigation;
+}

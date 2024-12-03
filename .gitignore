@@ -51,6 +51,8 @@ public/fallback-*.js
 .classpath
 *.launch
 .settings/
+.vscode/*
+!.vscode/settings.json
 
 # OS
 .DS_Store

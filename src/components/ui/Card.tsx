@@ -1,10 +1,12 @@
 // src/components/ui/card.tsx
-import { HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
+import { HTMLAttributes } from 'react';
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const Card = ({ className, children, ...props }: CardProps) => (
+const Card = ({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
       'rounded-lg border border-neutral-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md',

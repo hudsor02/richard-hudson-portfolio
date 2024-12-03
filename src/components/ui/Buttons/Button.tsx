@@ -1,7 +1,7 @@
 // Button.tsx
 'use client';
-import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
+import { forwardRef } from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'outline' | 'primary' | 'ghost';

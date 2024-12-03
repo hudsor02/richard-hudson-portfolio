@@ -1,8 +1,8 @@
 'use client';
 
+import SectionHeader from '@/components/ui/Section-Header';
 import { motion } from 'framer-motion';
-import { ChartBar, Users, Zap } from 'lucide-react';
-import SectionHeader from '@/components/section-header';
+import { BarChart as ChartBar, Users, Zap } from 'lucide-react';
 
 const services = [
   {

@@ -1,8 +1,8 @@
 // src/lib/email.ts
+import { ContactFormType } from '@/types/contact'; // Ensure correct type is imported
 import nodemailer from 'nodemailer';
-import { ContactFormData } from '@/types/contact';
 
-export type EmailTemplate = 'contact' | 'consultation';
+export type EmailTemplate = 'contact' | 'consultation' | 'support' | 'feedback';
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail', // Or your preferred email service
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const templates = {
-  contact: (data: ContactFormData) => ({
+  contact: (data: ContactFormType) => ({
     subject: `Contact Form: ${data.subject}`,
     html: `
       <h2>New Contact Form Submission</h2>
@@ -24,7 +24,7 @@ const templates = {
       <p>${data.message.replace(/\n/g, '<br>')}</p>
     `,
   }),
-  consultation: (data: ContactFormData) => ({
+  consultation: (data: ContactFormType) => ({
     subject: `Consultation Request: ${data.subject}`,
     html: `
       <h2>New Consultation Request</h2>
@@ -35,10 +35,32 @@ const templates = {
       <p>${data.message.replace(/\n/g, '<br>')}</p>
     `,
   }),
+  support: (data: ContactFormType) => ({
+    subject: `Support Request: ${data.subject}`,
+    html: `
+      <h2>New Support Request</h2>
+      <p><strong>From:</strong> ${data.name} (${data.email})</p>
+      <p><strong>Company:</strong> ${data.company || 'Not specified'}</p>
+      <p><strong>Subject:</strong> ${data.subject}</p>
+      <p><strong>Message:</strong></p>
+      <p>${data.message.replace(/\n/g, '<br>')}</p>
+    `,
+  }),
+  feedback: (data: ContactFormType) => ({
+    subject: `Feedback: ${data.subject}`,
+    html: `
+      <h2>New Feedback</h2>
+      <p><strong>From:</strong> ${data.name} (${data.email})</p>
+      <p><strong>Company:</strong> ${data.company || 'Not specified'}</p>
+      <p><strong>Subject:</strong> ${data.subject}</p>
+      <p><strong>Message:</strong></p>
+      <p>${data.message.replace(/\n/g, '<br>')}</p>
+    `,
+  }),
 };
 
 export async function sendEmail(
-  data: ContactFormData,
+  data: ContactFormType,
   template: EmailTemplate = 'contact'
 ) {
   const { subject, html } = templates[template](data);
@@ -57,13 +79,25 @@ export async function sendEmail(
       from: process.env.EMAIL_FROM,
       to: data.email,
       subject: `Thank you for your ${
-        template === 'contact' ? 'message' : 'consultation request'
+        template === 'contact'
+          ? 'message'
+          : template === 'consultation'
+            ? 'consultation request'
+            : template === 'support'
+              ? 'support request'
+              : 'feedback'
       }`,
       html: `
         <h2>Thank you for reaching out!</h2>
         <p>Hi ${data.name},</p>
         <p>I've received your ${
-          template === 'contact' ? 'message' : 'consultation request'
+          template === 'contact'
+            ? 'message'
+            : template === 'consultation'
+              ? 'consultation request'
+              : template === 'support'
+                ? 'support request'
+                : 'feedback'
         } and will get back to you as soon as possible.</p>
         <br>
         <p>Best regards,</p>

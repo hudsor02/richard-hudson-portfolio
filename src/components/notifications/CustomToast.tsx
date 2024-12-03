@@ -1,23 +1,26 @@
 // src/components/notifications/CustomToast.tsx
 'use client';
 
+import { Button } from '@/components/ui/Buttons/Button';
 import { X } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
 import { toast } from 'sonner';
+
 import type { CustomToastProps } from './types';
+
+const iconMap = {
+  success: '✓',
+  error: '✕',
+  info: 'ℹ',
+} as const;
+
+type ToastType = keyof typeof iconMap;
 
 export function CustomToast({
   title,
   description,
   type = 'info',
   toastId,
-}: CustomToastProps) {
-  const iconMap = {
-    success: '✓',
-    error: '✕',
-    info: 'ℹ',
-  } as const;
-
+}: CustomToastProps & { type: ToastType }) {
   const handleDismiss = () => {
     if (toastId) {
       toast.dismiss(toastId);

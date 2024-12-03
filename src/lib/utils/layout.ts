@@ -1,5 +1,5 @@
-import { twMerge } from 'tailwind-merge';
 import { ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,6 +37,7 @@ export const textStyles = {
 
 export const cardStyles = {
   base: 'rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md transition-shadow duration-200',
-  interactive: 'hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200',
+  interactive:
+    'hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200',
   padding: 'p-4 sm:p-6',
 };

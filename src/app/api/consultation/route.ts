@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
-import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { contactFormSchema } from '@/lib/validation/contact';
+import { ContactFormType } from '@/types/contact';
+import { NextResponse } from 'next/server';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { z } from 'zod';
 
 // Initialize rate limiter with valid configuration
@@ -21,13 +22,16 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = contactFormSchema.parse(body);
 
-    // Send email for consultation request
-    await sendEmail(
-      { ...validatedData, subject: 'Consultation Request' },
-      'consultation'
-    );
+    // Add the missing type property
+    const contactFormData: ContactFormType = {
+      ...validatedData,
+      type: 'consultation',
+      subject: 'Consultation Request', // Add the subject property
+    };
 
-    // Respond with success message
+    // Send email for consultation request
+    await sendEmail(contactFormData, 'consultation');
+
     return NextResponse.json(
       { message: 'Consultation request sent successfully' },
       { status: 200 }

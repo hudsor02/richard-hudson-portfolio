@@ -1,85 +1,68 @@
 // src/app/about/page.tsx
 'use client';
 
-import { Card } from '@/components/ui/Card';
-import { SocialLinks } from '@/components/social-links';
-import { motion } from 'framer-motion';
+import React from 'react';
+
+const expertiseAreas = [
+  {
+    title: 'Revenue Optimization',
+    description:
+      'Data-driven strategies to maximize revenue growth and operational efficiency.',
+  },
+  {
+    title: 'Partnership Development',
+    description:
+      'Strategic partnership programs that drive sustainable business growth.',
+  },
+  {
+    title: 'Process Automation',
+    description:
+      'Streamlined workflows and automated systems for improved productivity.',
+  },
+  {
+    title: 'Data Analytics',
+    description:
+      'Leveraging data to provide actionable insights and drive decision-making.',
+  },
+];
 
 export default function AboutPage() {
   return (
-    <main className="container mx-auto px-4 py-12">
-      <div className="mx-auto max-w-4xl space-y-12">
-        {/* Hero Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <h1 className="mb-4 text-4xl font-bold text-neutral-900">About Me</h1>
-          <p className="text-xl text-neutral-600">
+    <div className="min-h-screen bg-gray-50 text-neutral-900">
+      <div className="max-w-5xl px-4 py-16 mx-auto space-y-16">
+        <section className="space-y-6 text-center">
+          <h1 className="heading-1">About Me</h1>
+          <p className="body-regular">
             I am Richard Hudson, a Revenue Operations Professional specializing
             in data-driven solutions and strategic optimizations that drive
-            growth.
+            growth. I bridge the gap between sales, marketing, and customer
+            success teams to create unified strategies that maximize results.
           </p>
-        </motion.section>
+        </section>
 
-        {/* Approach Section */}
-        <Card className="p-8 bg-neutral-100">
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="mb-6 text-lg text-neutral-800"
-          >
-            As a Revenue Operations Consultant, I help businesses optimize their
-            revenue processes through data-driven insights and strategic
-            operational improvements. I bridge the gap between sales, marketing,
-            and customer success teams to create a unified approach to revenue
-            growth.
-          </motion.p>
-
-          <h2 className="mb-4 text-2xl font-bold text-neutral-900">
-            My Approach
-          </h2>
-          <motion.ul
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
-            }}
-            className="mb-6 space-y-2 text-neutral-800"
-          >
-            {[
-              '✅ Data-driven decision making',
-              '✅ Process optimization and automation',
-              '✅ Cross-functional collaboration',
-              '✅ Strategic planning and implementation',
-            ].map((item, index) => (
-              <motion.li
-                key={index}
-                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+        <section className="space-y-6">
+          <h2 className="heading-2">Areas of Expertise</h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {expertiseAreas.map((area) => (
+              <div
+                key={area.title}
+                className="p-4 border rounded-lg border-neutral-200"
               >
-                {item}
-              </motion.li>
+                <h3 className="text-lg font-semibold">{area.title}</h3>
+                <p className="body-regular">{area.description}</p>
+              </div>
             ))}
-          </motion.ul>
-        </Card>
+          </div>
+        </section>
 
-        {/* Connect Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-center"
-        >
-          <h2 className="mb-6 text-2xl font-bold text-neutral-900">
-            Connect With Me
-          </h2>
-          <SocialLinks />
-        </motion.section>
+        <section className="space-y-6">
+          <h2 className="heading-2">Consulting Services</h2>
+          <p className="body-regular">
+            I offer consulting services to help businesses optimize their
+            revenue operations and drive growth.
+          </p>
+        </section>
       </div>
-    </main>
+    </div>
   );
 }
