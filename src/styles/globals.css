@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --blue-primary: 226 100% 50%;
+    --blue-hover: 226 100% 45%;
+    --text-primary: 220 10% 10%;
+    --text-secondary: 220 10% 40%;
+  }
+
+  /* Reset styles */
+  html {
+    font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv02', 'cv03';
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-gray-50 text-neutral-900;
+    font-family: var(--font-jakarta);
+  }
+
+  * {
+    border-color: var(--neutral-200, #e5e5e5); /* Custom fallback */
+  }
+}
+
+@layer components {
+  .grid-background {
+    background-size: 40px 40px;
+    background-image: linear-gradient(
+        to right,
+        rgba(229, 231, 235, 0.1) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, rgba(229, 231, 235, 0.1) 1px, transparent 1px);
+    mask-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      transparent 100%
+    );
+  }
+
+  /* Typography */
+  .font-outfit {
+    font-family: var(--font-outfit);
+  }
+
+  .font-jakarta {
+    font-family: var(--font-jakarta);
+  }
+
+  /* Buttons */
+  .button-primary {
+    @apply rounded-lg bg-blue-primary px-6 py-2.5 text-white transition-all duration-200 hover:bg-blue-hover;
+  }
+
+  .button-secondary {
+    @apply rounded-lg border border-neutral-200 bg-white px-6 py-2.5 text-neutral-900 transition-all duration-200 hover:bg-neutral-50;
+  }
+
+  /* Spacing and Layout */
+  .section-spacing {
+    @apply my-16 md:my-24;
+  }
+
+  .content-container {
+    @apply mx-auto max-w-5xl px-4;
+  }
+
+  /* Headings */
+  .heading-1 {
+    @apply font-outfit text-5xl font-bold text-neutral-900 md:text-6xl;
+  }
+
+  .heading-2 {
+    @apply font-jakarta text-3xl font-semibold text-blue-primary md:text-4xl;
+  }
+
+  .heading-3 {
+    @apply font-outfit text-xl font-bold uppercase tracking-wide text-neutral-900;
+  }
+
+  /* Body Text */
+  .body-large {
+    @apply font-jakarta text-lg leading-relaxed text-neutral-600;
+  }
+
+  .body-regular {
+    @apply font-jakarta text-base leading-relaxed text-neutral-600;
+  }
+
+  /* Metrics */
+  .metric-value {
+    @apply font-outfit text-2xl font-bold text-blue-primary md:text-3xl;
+  }
+
+  .metric-label {
+    @apply font-jakarta text-sm text-neutral-600;
+  }
+
+  /* Navigation Styles */
+  .navContainer {
+    @apply fixed top-0 left-0 right-0 z-50 border-b border-neutral-200 bg-white/80 backdrop-blur-sm;
+  }
+
+  .navContent {
+    @apply flex h-16 items-center justify-between;
+  }
+
+  .logo {
+    @apply text-xl font-bold text-neutral-900 transition-colors hover:text-blue-primary;
+  }
+
+  .navLink {
+    @apply relative text-sm font-medium transition-colors;
+  }
+
+  .activeNavLink {
+    @apply text-blue-primary;
+  }
+
+  .inactiveNavLink {
+    @apply text-neutral-600 hover:text-blue-primary;
+  }
+
+  .active-tab-indicator {
+    position: absolute;
+    bottom: -1.5rem;
+    left: 0;
+    height: 0.5rem;
+    width: 100%;
+    background-color: hsl(var(--blue-primary));
+  }
+}

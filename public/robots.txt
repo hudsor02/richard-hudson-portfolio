@@ -1,0 +1,32 @@
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /404
+Disallow: /500
+Disallow: /consultation/ // To protect forms from being unnecessarily indexed
+Disallow: /thank-you/
+
+# Block sensitive or irrelevant content for search engines
+Disallow: /private/
+Disallow: /scripts/
+
+# Allow the entire website to be indexed except the paths defined above
+Allow: /
+
+# Sitemap for search engines to discover all available pages
+Sitemap: https://richardwhudsonjr.com/api/sitemap
+
+# Specify the crawl delay to prevent server overloads
+Crawl-delay: 10
+
+# Set rules for Googlebot to ensure optimal crawling
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 5
+
+# Allow all other well-behaved bots but throttle requests to prevent performance issues
+User-agent: Bingbot
+Crawl-delay: 10
+
+User-agent: *
+Allow: /
