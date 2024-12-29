@@ -1,13 +1,15 @@
 import { Analytics } from '@/components/Analytics';
 import Navigation from '@/components/navigation/Navigation';
+import Footer from '@/components/navigation/Footer';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { TailwindIndicator } from '@/components/TailwindIndicator';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import '@/styles/globals.css';
 import { Toaster } from 'sonner';
+import '@/styles/globals.css';
+
 
 const inter = Inter({
   subsets: ['latin'],
@@ -57,9 +59,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+ }: {
   children: React.ReactNode;
-}) {
+ }) {
   return (
     <html
       lang="en"
@@ -81,10 +83,9 @@ export default function RootLayout({
         >
           <div className="relative flex flex-col min-h-screen">
             <Navigation />
-
             <main className="flex-1 pt-16">{children}</main>
+            <Footer />
           </div>
-
           <Toaster
             position="bottom-right"
             toastOptions={{
@@ -99,4 +100,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+ }

@@ -1,59 +1,14 @@
-// src/components/navigation/Navigation.tsx
+// src/components/navigation/Footer.tsx
 'use client';
 
-import { NavigationButton } from '@/components/ui/Buttons/NavigationDownloadButton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import { MessageSquare, ExternalLink } from 'lucide-react';
 
-const Navigation: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+const Footer: React.FC = () => {
   const pathname = usePathname();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleDownload = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/resume/download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/pdf',
-        },
-        body: JSON.stringify({ format: 'pdf' }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.error || 'Download failed');
-      }
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'Richard_Hudson_Resume.pdf';
-      link.click();
-      window.URL.revokeObjectURL(url);
-      toast.success('Resume downloaded successfully!');
-    } catch (error) {
-      console.error('Download error:', error);
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to download resume'
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const navItems = [
+  const footerLinks = [
     { href: '/', label: 'Home' },
     { href: '/resume', label: 'Resume' },
     { href: '/about', label: 'About' },
@@ -62,45 +17,87 @@ const Navigation: React.FC = () => {
     { href: '/contact', label: 'Contact' },
   ];
 
+  const socialLinks = [
+    {
+      href: 'https://github.com/hudsor02',
+      label: 'GitHub',
+    },
+    {
+      href: 'https://www.linkedin.com/in/richard-hudson-jr/',
+      label: 'LinkedIn',
+    },
+    {
+      href: 'mailto:richard@richardwhudsonjr.com',
+      icon: <MessageSquare className="w-5 h-5" />,
+      label: 'Email',
+    },
+  ];
+
   return (
-    <nav
-      className={`fixed top-0 w-full bg-white border-b border-neutral-200 shadow-sm z-10 ${
-        isScrolled ? 'backdrop-blur-md' : ''
-      }`}
-    >
-      <div className="flex items-center justify-between max-w-5xl p-4 mx-auto">
-        <Link href="/" className="text-lg font-bold text-blue-primary">
-          Richard Hudson
-        </Link>
-        <ul className="flex space-x-6">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`border-b-2 ${
-                  pathname === item.href
-                    ? 'border-blue-600 text-blue-600 font-bold'
-                    : 'border-transparent hover:text-blue-600'
-                } transition-colors pb-1`}
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <NavigationButton
-          onClick={handleDownload}
-          disabled={isLoading}
-          variant="primary"
-          size="md"
-          isLoading={isLoading}
-          aria-label="Download Resume (PDF)"
-        >
-          Download Resume (PDF)
-        </NavigationButton>
+    <footer className="w-full bg-white border-t border-neutral-200">
+      <div className="max-w-5xl px-4 py-8 mx-auto">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          {/* Brand Section */}
+          <div className="flex flex-col space-y-4">
+            <Link href="/" className="text-lg font-bold text-blue-primary">
+              Richard Hudson
+            </Link>
+            <p className="text-sm text-neutral-600">
+              Revenue Operations Professional specializing in data-driven solutions and strategic optimizations.
+            </p>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-semibold text-neutral-900">Quick Links</h3>
+            <ul className="space-y-2">
+              {footerLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={`text-sm ${
+                      pathname === link.href
+                        ? 'text-blue-600 font-semibold'
+                        : 'text-neutral-600 hover:text-blue-600'
+                    } transition-colors`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Social Links & Contact */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-semibold text-neutral-900">Connect</h3>
+            <div className="flex space-x-4">
+              {socialLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 transition-colors text-neutral-600 hover:text-blue-600"
+                  aria-label={link.label}
+                >
+                  {link.icon || <ExternalLink className="w-5 h-5" />}
+                  <span className="text-sm">{link.label}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="pt-8 mt-8 border-t border-neutral-200">
+          <p className="text-sm text-center text-neutral-600">
+            © {new Date().getFullYear()} Richard Hudson. All rights reserved.
+          </p>
+        </div>
       </div>
-    </nav>
+    </footer>
   );
 };
 
-export default Navigation;
+export default Footer;
