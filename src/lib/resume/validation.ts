@@ -20,7 +20,10 @@ export function validateResumeData(data: ResumeData): ValidationResult {
   try {
     validateHeader(data.header, errors);
 
-    if (typeof data.summary === 'string' && data.summary.length > RESUME_CONFIG.validation.maxLength.summary) {
+    if (
+      typeof data.summary === 'string' &&
+      data.summary.length > RESUME_CONFIG.validation.maxLength.summary
+    ) {
       warnings.push('Professional summary exceeds recommended length');
     }
 
@@ -44,7 +47,8 @@ export function validateResumeData(data: ResumeData): ValidationResult {
       errors: [
         {
           field: 'general',
-          message: error instanceof Error ? error.message : 'Unknown validation error',
+          message:
+            error instanceof Error ? error.message : 'Unknown validation error',
         },
       ],
       warnings,
@@ -61,7 +65,13 @@ function validateHeader(
     return;
   }
 
-  const requiredFields = ['name', 'title', 'email', 'phone', 'location'] as const;
+  const requiredFields = [
+    'name',
+    'title',
+    'email',
+    'phone',
+    'location',
+  ] as const;
   requiredFields.forEach((field) => {
     if (!header[field]) {
       errors.push({
@@ -132,8 +142,13 @@ function validateExperience(
         field: `experience[${index}].achievements`,
         message: 'At least one achievement is required',
       });
-    } else if (exp.achievements.length > RESUME_CONFIG.validation.maxItems.achievementsPerJob) {
-      warnings.push(`Experience "${exp.position}" has more achievements than recommended`);
+    } else if (
+      exp.achievements.length >
+      RESUME_CONFIG.validation.maxItems.achievementsPerJob
+    ) {
+      warnings.push(
+        `Experience "${exp.position}" has more achievements than recommended`
+      );
     }
   });
 }
@@ -164,8 +179,12 @@ function validateTechnicalExpertise(
         field: `technicalExpertise.categories[${index}].skills`,
         message: 'At least one skill is required per category',
       });
-    } else if (category.skills.length > RESUME_CONFIG.validation.maxItems.skills) {
-      warnings.push(`Category "${category.title}" has more skills than recommended`);
+    } else if (
+      category.skills.length > RESUME_CONFIG.validation.maxItems.skills
+    ) {
+      warnings.push(
+        `Category "${category.title}" has more skills than recommended`
+      );
     }
   });
 }
@@ -221,7 +240,9 @@ function validateCertifications(
   warnings: string[]
 ): void {
   if (certifications.length > RESUME_CONFIG.validation.maxItems.certificates) {
-    warnings.push(`Number of certifications (${certifications.length}) exceeds recommended maximum`);
+    warnings.push(
+      `Number of certifications (${certifications.length}) exceeds recommended maximum`
+    );
   }
 
   certifications.forEach((cert, index) => {

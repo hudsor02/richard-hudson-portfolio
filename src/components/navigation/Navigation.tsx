@@ -1,7 +1,7 @@
-// src/components/navigation/Navigation.tsx
 'use client';
 
-import NavigationButton from '@/components/ui/Buttons/NavigationDownloadButton';
+import { NavigationButton } from '@/components/ui/Buttons/NavigationDownloadButton';
+import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 const Navigation: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -72,7 +73,7 @@ const Navigation: React.FC = () => {
         <Link href="/" className="text-lg font-bold text-blue-primary">
           Richard Hudson
         </Link>
-        <ul className="flex space-x-6">
+        <ul className="hidden md:flex space-x-6">
           {navItems.map((item) => (
             <li key={item.href}>
               <Link
@@ -88,17 +89,67 @@ const Navigation: React.FC = () => {
             </li>
           ))}
         </ul>
-        <NavigationButton
-          onClick={handleDownload}
-          disabled={isLoading}
-          variant="primary"
-          size="md"
-          isLoading={isLoading}
-          aria-label="Download Resume (PDF)"
+
+        {/* Desktop Navigation Button */}
+        <div className="hidden md:block">
+          <NavigationButton
+            onClick={handleDownload}
+            disabled={isLoading}
+            variant="primary"
+            size="md"
+            isLoading={isLoading}
+            aria-label="Download Resume (PDF)"
+          >
+            Download Resume (PDF)
+          </NavigationButton>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden p-2"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label={isMenuOpen ? 'Close Menu' : 'Open Menu'}
         >
-          Download Resume (PDF)
-        </NavigationButton>
+          {isMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t border-neutral-200">
+          <div className="p-4 space-y-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`block py-2 ${
+                  pathname === item.href
+                    ? 'text-blue-600 font-bold'
+                    : 'text-neutral-600 hover:text-blue-600'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <NavigationButton
+              onClick={handleDownload}
+              disabled={isLoading}
+              variant="primary"
+              size="md"
+              isLoading={isLoading}
+              className="w-full"
+              aria-label="Download Resume (PDF)"
+            >
+              Download Resume (PDF)
+            </NavigationButton>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

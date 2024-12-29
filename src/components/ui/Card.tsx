@@ -1,35 +1,41 @@
-// src/components/ui/card.tsx
+'use client';
+
 import { cn } from '@/lib/utils';
 import { HTMLAttributes } from 'react';
+
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  hover?: boolean;
+  interactive?: boolean;
+}
 
 const Card = ({
   className,
   children,
+  hover = true,
+  interactive = true,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      'rounded-lg border border-neutral-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md',
-      className
-    )}
-    {...props}
-  >
-    {children}
-  </div>
-);
+}: CardProps) => {
+  return (
+    <div
+      className={cn(
+        'rounded-lg border border-neutral-200 bg-white shadow-sm',
+        hover && 'hover:shadow-lg',
+        interactive && 'transition-all duration-200',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
 
 const CardHeader = ({
   className,
   children,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      'border-b border-neutral-200 px-4 py-2 dark:border-neutral-800',
-      className
-    )}
-    {...props}
-  >
+  <div className={cn('border-b border-neutral-200 p-6', className)} {...props}>
     {children}
   </div>
 );
@@ -40,10 +46,7 @@ const CardTitle = ({
   ...props
 }: HTMLAttributes<HTMLHeadingElement>) => (
   <h3
-    className={cn(
-      'text-lg font-semibold text-neutral-900 dark:text-neutral-100',
-      className
-    )}
+    className={cn('text-xl font-semibold text-neutral-900', className)}
     {...props}
   >
     {children}
@@ -55,7 +58,17 @@ const CardContent = ({
   children,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('p-4', className)} {...props}>
+  <div className={cn('p-6', className)} {...props}>
+    {children}
+  </div>
+);
+
+const CardFooter = ({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => (
+  <div className={cn('border-t border-neutral-200 p-6', className)} {...props}>
     {children}
   </div>
 );
@@ -63,5 +76,6 @@ const CardContent = ({
 Card.Header = CardHeader;
 Card.Title = CardTitle;
 Card.Content = CardContent;
+Card.Footer = CardFooter;
 
-export { Card, CardHeader, CardTitle, CardContent };
+export { Card, CardHeader, CardTitle, CardContent, CardFooter };

@@ -1,7 +1,7 @@
 // src/components/navigation/Navigation.tsx
 'use client';
 
-import NavigationButton from '@/components/ui/Buttons/NavigationDownloadButton';
+import { NavigationButton } from '@/components/ui/Buttons/NavigationDownloadButton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
